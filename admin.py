@@ -29,11 +29,19 @@
 from django.contrib import admin
 from djangotasks.models import Task
 
+def set_scheduled(modeladmin, request, queryset):
+    queryset.update(status='scheduled')
+set_scheduled.short_description = "Mark selected as scheduled"
+
+def set_archived(modeladmin, request, queryset):
+    queryset.update(archived=True)
+set_archived.short_description = "Mark selected as archived"
 
 class TaskAdmin(admin.ModelAdmin):
     list_display = ('model', 'method', 'object_id', 'start_date', 'end_date',
                     'duration', 'status_for_display', 'archived',)
-    list_filter = ('method',)
+    list_filter = ('method','archived','status',)
     search_fields = ('object_id',)
+    actions = (set_scheduled,set_archived)
     
 admin.site.register(Task, TaskAdmin)
